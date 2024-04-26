@@ -13,9 +13,11 @@ const renderer = new Three.WebGLRenderer({
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30); 
+camera.position.setX(-3); 
 
 renderer.render(scene, camera);
 
+//torus
 const geometry = new Three.TorusGeometry(10,3,16,100)
 // const material = new Three.MeshBasicMaterial({color: 0xFF6347, wireframe: true});
 const material = new Three.MeshStandardMaterial({color: 0xFF6347});
@@ -52,11 +54,54 @@ function addStar() {
   scene.add(star);
 
 }
-
 Array(200).fill().forEach(addStar);
+
 
 const spaceTexture = new Three.TextureLoader().load('space.jpg');
 scene.background = spaceTexture;
+
+const vscodeTexture = new Three.TextureLoader().load('vscode.png');
+
+const vscode = new Three.Mesh(
+  new Three.BoxGeometry(3,3,3),
+  new Three.MeshBasicMaterial({map: vscodeTexture})
+);
+scene.add(vscode);
+
+
+//moon
+const moonTexture = new Three.TextureLoader().load('moon.jpg');
+const normalTexture  = new Three.TextureLoader().load('normal.jpg');
+const moon = new Three.Mesh(
+  new Three.SphereGeometry(3, 32, 32),
+  new Three.MeshStandardMaterial({
+    map:moonTexture,
+    normalMap: normalTexture,
+  })
+  
+);
+
+scene.add(moon);
+moon.position.z = 30;
+moon.position.setX(-10);
+
+function moveCamera(){
+
+  const t = document.body.getBoundingClientRect().top;
+  moon.rotation.x += 0.05;
+  moon.rotation.y += 0.075;
+  moon.rotation.z += 0.05;
+
+  vscode.rotation.y += 0.01;
+  vscode.rotation.z += 0.01;
+
+  camera.position.z = t * -0.01;
+  camera.position.x = t * -0.0002;
+  camera.rotation.y = t * -0.0002;
+  
+
+}
+document.body.onscroll = moveCamera;
 
 function animate(){
   requestAnimationFrame(animate);
